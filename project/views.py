@@ -46,19 +46,20 @@ def pay_employee():
 		taxes = calculate_taxes(employee)
 		today_date = datetime.datetime.now()
 		date_str = today_date.strftime('%m-%d-%Y')
+		print(employee)
 		employee.last_date_paid = date_str
 		payroll_record = PayrollRecord(employee_id=employee_id,date=date_str,medicare_tax=taxes['medicare_tax_witholding'],
 									   social_security_tax=taxes['social_security_witholding'], federal_tax=taxes['federal_tax_witholding'],
 									   state_tax=taxes['state_tax_witholding'], total_tax=taxes['total_tax'], net_pay=taxes['net_pay'])
 		balance_sheet = BalanceSheet.query.all()[0]
-		balance_sheet.cash -= round(float(employee.salary) - float(taxes['total_tax']), 2)
-		balance_sheet.total_current_assets -= round(float(employee.salary) - float(taxes['total_tax']), 2)
+		balance_sheet.cash -= round(float(employee.salary/12) - float(taxes['total_tax']), 2)
+		balance_sheet.total_current_assets -= round(float(employee.salary/12) - float(taxes['total_tax']), 2)
 		income_statement = IncomeStatement.query.all()[0]
-		income_statement.payroll += round(float(employee.salary) - float(taxes['total_tax']), 2)
+		income_statement.payroll += round(float(employee.salary/12) - float(taxes['total_tax']), 2)
 		income_statement.payroll_witholding += round(float(taxes['total_tax']), 2)
-		income_statement.total_expenses += round(float(employee.salary) - float(taxes['total_tax']), 2)
-		income_statement.operating_income -= round(float(employee.salary) - float(taxes['total_tax']), 2)
-		income_statement.net_income -= round(float(employee.salary) - float(taxes['total_tax']), 2)
+		income_statement.total_expenses += round(float(employee.salary/12) - float(taxes['total_tax']), 2)
+		income_statement.operating_income -= round(float(employee.salary/12) - float(taxes['total_tax']), 2)
+		income_statement.net_income -= round(float(employee.salary/12) - float(taxes['total_tax']), 2)
 		db.session.add(payroll_record)
 		db.session.commit()
 		db.session.flush()
@@ -70,10 +71,7 @@ def pay_employee():
 		current_date = datetime.datetime.now()
 		current_date_str = current_date.strftime('%m-%d-%Y')
 		last_date_paid = employee.last_date_paid
-		if last_date_paid is None:
-			employee.last_date_paid = current_date_str
-			last_date_paid = current_date_str
-		else:
+		if last_date_paid is not None:
 			difference = abs((datetime.datetime.strptime('11-04-2017', "%m-%d-%Y") - datetime.datetime.strptime(last_date_paid, "%m-%d-%Y")).days)
 			if difference < 30:
 				new_employee['payroll'] = False
@@ -86,9 +84,12 @@ def pay_employee():
 def payroll_events():
 	payroll_events = PayrollRecord.query.all()
 	payroll_events_array = []
+	print(payroll_events)
 	for payroll_event in payroll_events:
+		print(payroll_event)
 		employee_id = payroll_event.employee_id
 		employee = Employee.query.filter_by(id=employee_id).all()[0]
+		print(employee)
 		year = employee.last_date_paid.split('-')[2]
 		new_event = {'last_date_paid': datetime.datetime.strftime(datetime.datetime.strptime(employee.last_date_paid, '%m-%d-%Y'), '%B') + ' ' + year,
 		 			 'first_name': employee.first_name,
