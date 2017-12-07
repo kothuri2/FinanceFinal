@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+	    <nav>
+	      <div class="nav-wrapper">
+	        <a class="brand-logo">Payroll Events</a>
+	        <ul class="right hide-on-med-and-down">
+	          <li><a href="/">Home</a></li>
+	        </ul>
+	      </div>
+	    </nav>
+    </div>
+    <div class="row">
+     <table class="striped">
+        <thead>
+          <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Salary</th>
+              <th>Federal Tax ($)</th>
+              <th>State Tax ($)</th>
+              <th>Medicare Tax ($)</th>
+              <th>Social Security Tax ($)</th>
+              <th>Total Tax ($)</th>
+              <th>Net Pay ($)</th>
+              <th>Last Month Paid</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payroll_event in payroll_events %}
+	          <tr>
+	          	<td>{{payroll_event.first_name}}</td>
+	          	<td>{{payroll_event.last_name}}</td>
+	          	<td>${{payroll_event.salary}}</td>
+	          	<td>${{payroll_event.payroll.federal_tax}}</td>
+	          	<td>${{payroll_event.payroll.state_tax}}</td>
+	          	<td>${{payroll_event.payroll.medicare_tax}}</td>
+	          	<td>${{payroll_event.payroll.social_security_tax}}</td>
+	          	<td>${{payroll_event.payroll.total_tax}}</td>
+	          	<td>${{payroll_event.payroll.net_pay}}</td>
+              <td>{{payroll_event.last_date_paid}}</td>
+	          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+     </div>
+</body>
+</html>

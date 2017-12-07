@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper">
+        <a class="brand-logo">Create Invoice</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </div>
+    </nav>
+    </div>
+    <br>
+	<div class="row">
+    	<form class="col s12" action="/create_invoice" method="POST">
+	      <div class="row">
+	        <div class="input-field col s4">
+	          <select name="customer">
+	          	{% for customer in customers %}
+	          		<option value="{{customer.id}}">{{customer.company_name}}</option>
+	          	{% endfor %}
+			  </select>
+	          <label for="customer">Customer</label>
+	        </div>
+	        <div class="input-field col s4">
+	          <select name="product" id="product" onchange="updateFields()">
+	          	{% for product in products %}
+	          		<option value="{{product.product.product_name}}, {{product.quantity}}">{{product.product.product_name}}</option>
+	          	{% endfor %}
+			  </select>
+	          <label for="product">Product</label>
+	        </div>
+	        <div class="s4">
+	        	<label for="quantity_available">Available Quantity</label>
+      			<p id="quantity_available" name="quantity_available"></p>
+	        </div>
+	      </div>
+	      <div class="row">
+		       	<div class="input-field col s6">
+		       	  <i class="material-icons prefix">attach_money</i>
+		          <input name="number_of_units" id="number_of_units" type="number" class="validate" min="0" max="">
+		          <label for="number_of_units">Number of Units to Invoice</label>
+		        </div>
+	        </div>
+	      <button class="btn waves-effect waves-light" type="submit">Submit
+		    <i class="material-icons right">send</i>
+		  </button>
+    	</form>
+  	</div>
+</body>
+</html>
+<script>
+$(document).ready(function() {
+    $('select').material_select();
+    updateFields();
+});
+function updateFields() {
+	var selected = document.getElementById('product').value;
+    var name = selected.split(',')[0];
+    var quantity_available = selected.split(',')[1].trim();
+    document.getElementById("number_of_units").setAttribute("max", quantity_available)
+    document.getElementById('quantity_available').innerHTML = name + " : " + quantity_available + " units";	
+}
+</script>

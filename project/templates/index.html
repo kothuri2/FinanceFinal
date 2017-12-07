@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+	<div class="container">
+        <!-- Page Content goes here -->
+        <div class="row" id="business_info_row">
+        	<nav>
+  			    <div class="nav-wrapper">
+  			      <a href="#" class="brand-logo">Business Info</a>
+  			    </div>
+			    </nav>
+          <br>
+          <a class="waves-effect waves-light btn" href="{{url_for('parts_inventory')}}">View Parts Inventory</a>
+          <a class="waves-effect waves-light btn" href="/">View PL</a>
+          <a class="waves-effect waves-light btn" href="/">View Balance Sheet</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('build_units')}}">Build Units</a>
+        </div>
+
+        <div class="row" id="employee_info_row">
+        	<nav>
+			    <div class="nav-wrapper">
+			      <a href="#" class="brand-logo">Employee Info</a>
+			     </div>
+			    </nav>
+    			<br>
+    			<a class="waves-effect waves-light btn" href="{{url_for('add_employee')}}">Add Employee</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('get_employees')}}">View Employees</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('pay_employee')}}">Pay Employee</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('payroll_events')}}">Payroll Events</a>
+        </div>
+
+        <div class="row" id="customers_info_row">
+          <nav>
+          <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Customer Info</a>
+           </div>
+          </nav>
+          <br>
+          <a class="waves-effect waves-light btn" href="{{url_for('add_customer')}}">Add Customer</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('get_customers')}}">View Customers</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('create_invoice')}}">Create Invoice</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('get_invoices')}}">View Invoices</a>
+        </div>
+
+        <div class="row" id="vendors_info_row">
+          <nav>
+          <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Vendor Info</a>
+           </div>
+          </nav>
+          <br>
+          <a class="waves-effect waves-light btn" href="{{url_for('add_vendor')}}">Add Vendor</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('get_vendors')}}">View Vendors</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('create_purchase_order')}}">Create PO</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('purchase_orders')}}">View Purchase Orders</a>
+        </div>
+
+        <div class="row" id="inventory_info_row">
+        </div>
+
+        <div class="row" id="sheets_info_row">
+        </div>
+  	</div>
+</body>
+</html>

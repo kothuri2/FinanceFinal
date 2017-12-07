@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+	    <nav>
+	      <div class="nav-wrapper">
+	        <a class="brand-logo">Invoices</a>
+	        <ul class="right hide-on-med-and-down">
+	          <li><a href="/">Home</a></li>
+	        </ul>
+	      </div>
+	    </nav>
+    </div>
+    <div class="row">
+     <table class="striped">
+        <thead>
+          <tr>
+              <th>Invoice Number</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Price/Unit</th>
+              <th>Total ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for invoice in invoices %}
+	          <tr>
+	          	<td>{{invoice.invoice.id}}</td>
+	          	<td>{{invoice.invoice.date}}</td>
+	          	<td>{{invoice.customer.company_name}}</td>
+	          	<td>{{invoice.invoice.product_name}}</td>
+	          	<td>{{invoice.invoice.quantity}}</td>
+	          	<td>${{invoice.customer.price}}</td>
+	          	<td>${{invoice.total}}</td>
+	          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+     </div>
+</body>
+</html>

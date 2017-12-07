@@ -1,0 +1,20 @@
+<div class="row" name="myInputs[]">
+<div class="input-field col s4" style="visibility:hidden">
+  <i class="material-icons prefix">account_circle</i>
+  <input name="product_name_{{counter}}" id="product_name_{{counter}}" type="text" class="validate">
+  <label for="product_name_{{counter}}">Product Name</label>
+</div>
+<div class="input-field col s4">
+  <select name="part_name_{{counter}}">
+  	{% for vendor in vendors %}
+  		<option value="{{vendor.part}}">{{vendor.part}}</option>
+  	{% endfor %}
+  </select>
+  <label for="part_name_{{counter}}">Part Name</label>
+</div>
+	<div class="input-field col s2">
+	  <i class="material-icons prefix">attach_money</i>
+  <input name="number_of_units_{{counter}}" id="number_of_units_{{counter}}" type="number" class="validate">
+  <label for="number_of_units_{{counter}}">Number of Units</label>
+	</div>
+</div>	

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+	    <nav>
+	      <div class="nav-wrapper">
+	        <a class="brand-logo">Pay Employees</a>
+	        <ul class="right hide-on-med-and-down">
+	          <li><a href="/">Home</a></li>
+	        </ul>
+	      </div>
+	    </nav>
+    </div>
+    <div class="row">
+     <table class="striped">
+        <thead>
+          <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Address Line 1</th>
+              <th>Address Line 2</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Zip Code</th>
+              <th>SSN</th>
+              <th># of Witholdings</th>
+              <th>Salary</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for employee in employees %}
+	          <tr>
+	          	<td>{{employee.employee.first_name}}</td>
+	          	<td>{{employee.employee.last_name}}</td>
+	          	<td>{{employee.employee.address_line_1}}</td>
+	          	<td>{{employee.employee.address_line_2}}</td>
+	          	<td>{{employee.employee.city}}</td>
+	          	<td>{{employee.employee.state}}</td>
+	          	<td>{{employee.employee.zip_code}}</td>
+	          	<td>{{employee.employee.social_security_number}}</td>
+	          	<td>{{employee.employee.number_of_witholdings}}</td>
+	          	<td>{{employee.employee.salary}}</td>
+              {% if employee.payroll %}
+                <td>
+                  <form method="POST" action="/pay_employee">
+                    <input name="employee_id" id="employee_id" value="{{employee.employee.id}}" hidden>
+                    <button class="btn waves-effect waves-light" type="submit">Pay
+                    </button>
+                  </form>
+                </td>
+              {% else %}
+                <td>
+                  <form method="POST" action="/pay_employee">
+                    <input name="employee_id" id="employee_id" value="{{employee.employee.id}}" hidden>
+                    <button class="btn waves-effect waves-light" type="submit" disabled>Pay
+                    </button>
+                  </form>
+                </td>
+              {% endif %}
+	          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+</body>
+<script>
+
+</script>
+</html>

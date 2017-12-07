@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+	    <nav>
+	      <div class="nav-wrapper">
+	        <a class="brand-logo">Vendors</a>
+	        <ul class="right hide-on-med-and-down">
+	          <li><a href="/">Home</a></li>
+	        </ul>
+	      </div>
+	    </nav>
+    </div>
+    <div class="row">
+     <table class="striped">
+        <thead>
+          <tr>
+              <th>Company Name</th>
+              <th>Address Line 1</th>
+              <th>Address Line 2</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Zip Code</th>
+              <th>Part</th>
+              <th>Price per Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for vendor in vendors %}
+	          <tr>
+              <td>{{vendor.company_name}}</td>
+	          	<td>{{vendor.address_line_1}}</td>
+	          	<td>{{vendor.address_line_2}}</td>
+	          	<td>{{vendor.city}}</td>
+	          	<td>{{vendor.state}}</td>
+	          	<td>{{vendor.zip_code}}</td>
+              <td>{{vendor.part}}</td>
+	          	<td>{{vendor.price_per_unit}}</td>
+	          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+     </div>
+</body>
+</html>

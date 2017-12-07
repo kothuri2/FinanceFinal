@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+	    <nav>
+	      <div class="nav-wrapper">
+	        <a class="brand-logo">Parts Inventory</a>
+	        <ul class="right hide-on-med-and-down">
+	          <li><a href="/">Home</a></li>
+	        </ul>
+	      </div>
+	    </nav>
+    </div>
+    <div class="row">
+     <table class="striped">
+        <thead>
+          <tr>
+              <th>Part</th>
+              <th>Quantity</th>
+              <th>Price/Unit</th>
+              <th>Value ($)</th>
+              <th>ReOrder</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for part_inventory in parts_inventory %}
+	          <tr>
+	          	<td>{{part_inventory.vendor.part}}</td>
+	          	<td>{{part_inventory.quantity}}</td>
+	          	<td>${{part_inventory.vendor.price_per_unit}}</td>
+	          	<td>${{part_inventory.total}}</td>
+              {% if part_inventory.quantity_low %}
+              <td>
+                  <form action="/create_purchase_order">
+                    <button class="btn waves-effect waves-light" type="submit">Reorder
+                    </button>
+                  </form>
+              </td>
+              {% else %}
+              <td>
+                  <form action="/create_purchase_order">
+                    <button class="btn waves-effect waves-light" type="submit" disabled>Reorder
+                    </button>
+                  </form>
+              </td>
+              {% endif %}
+	          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+     </div>
+</body>
+</html>

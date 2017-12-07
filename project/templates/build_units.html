@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper">
+        <a class="brand-logo">Create New Product</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </div>
+    </nav>
+    </div>
+    <br>
+	<div class="row">
+		<button class="btn waves-effect waves-light" onClick="addInput()">Add Part
+		</button>
+    	<form class="col s12" action="/build_units" method="POST">
+		  <div id="dynamicInput">
+		      <div class="row" name="myInputs[]">
+		      	<div class="input-field col s4">
+		          <i class="material-icons prefix">account_circle</i>
+		          <input name="product_name" id="product_name" type="text" class="validate">
+		          <label for="product_name">Product Name</label>
+		        </div>
+		        <div class="input-field col s4">
+		          <select name="part_name_1">
+		          	{% for vendor in vendors %}
+		          		<option value="{{vendor.part}}">{{vendor.part}}</option>
+		          	{% endfor %}
+				  </select>
+		          <label for="part_name_1">Part Name</label>
+		        </div>
+		       	<div class="input-field col s2">
+		       	  <i class="material-icons prefix">attach_money</i>
+		          <input name="number_of_units_1" id="number_of_units_1" type="number" class="validate">
+		          <label for="number_of_units_1">Number of Units</label>
+		        </div>
+		      </div>
+	      </div>
+	      <button class="btn waves-effect waves-light" type="submit">Submit
+		    <i class="material-icons right">send</i>
+		  </button>
+    	</form>
+  	</div>
+</body>
+</html>
+<script>
+$(document).ready(function() {
+    $('select').material_select();
+});
+var counter = 1;
+function addInput() {
+	  counter += 1;
+	  $.ajax({
+	    type: 'POST',
+	    contentType: 'application/json',
+	    url: '/get_new_part',
+	    dataType : 'json',
+	    data : JSON.stringify({'counter': counter}),
+	    success : function(result) {
+	    	$("#dynamicInput").append(result.responseText);
+	    	$('select').material_select();
+	    }, error : function(result) {
+	    	$("#dynamicInput").append(result.responseText);
+	    	$('select').material_select();
+	    }
+	});
+}
+</script>
