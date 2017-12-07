@@ -32,7 +32,7 @@
               <th>Social Security Tax ($)</th>
               <th>Total Tax ($)</th>
               <th>Net Pay ($)</th>
-              <th>Last Month Paid</th>
+              <th>Month Paid</th>
           </tr>
         </thead>
         <tbody>
@@ -47,7 +47,7 @@
 	          	<td>${{payroll_event.payroll.social_security_tax}}</td>
 	          	<td>${{payroll_event.payroll.total_tax}}</td>
 	          	<td>${{payroll_event.payroll.net_pay}}</td>
-              <td>{{payroll_event.last_date_paid}}</td>
+              <td>{{payroll_event.payroll.date}}</td>
 	          </tr>
           {% endfor %}
         </tbody>

@@ -5,9 +5,26 @@ from sqlalchemy.ext.declarative import declarative_base
 import json, datetime, ast
 from project.taxes import calculate_taxes
 
+month_increment = 0
+
 @app.route("/")
 def main():
 	return render_template('index.html')
+
+@app.route("/increment_date", methods=["POST"])
+def increment_date():
+	global month_increment
+	balance_sheet = BalanceSheet.query.all()[0]
+	income_statement = IncomeStatement.query.all()[0]
+	# balance_sheet operations
+	balance_sheet.cash += balance_sheet.accounts_receivable
+	balance_sheet.cash -= balance_sheet.accounts_payable
+	balance_sheet.accounts_receivable = 0
+	balance_sheet.accounts_payable = 0
+	month_increment += 1
+	db.session.commit()
+	db.session.flush()
+	return redirect('/')	
 
 @app.route("/add_employee", methods=["POST", "GET"])
 def add_employee():
@@ -40,6 +57,7 @@ def get_employees():
 
 @app.route("/pay_employee", methods=["POST", "GET"])
 def pay_employee():
+	global month_increment
 	if request.method == 'POST':
 		employee_id = request.form['employee_id']
 		employee = Employee.query.filter_by(id=employee_id).all()[0]
@@ -47,6 +65,11 @@ def pay_employee():
 		today_date = datetime.datetime.now()
 		date_str = today_date.strftime('%m-%d-%Y')
 		print(employee)
+		month, day, year = date_str.split('-')[0], date_str.split('-')[1], date_str.split('-')[2]
+		new_month = (int(month) + month_increment)%12
+		if new_month == 0:
+			new_month = 12
+		date_str = str(new_month) + '-'+ day + '-'+year
 		employee.last_date_paid = date_str
 		payroll_record = PayrollRecord(employee_id=employee_id,date=date_str,medicare_tax=taxes['medicare_tax_witholding'],
 									   social_security_tax=taxes['social_security_witholding'], federal_tax=taxes['federal_tax_witholding'],
@@ -72,8 +95,15 @@ def pay_employee():
 		current_date_str = current_date.strftime('%m-%d-%Y')
 		last_date_paid = employee.last_date_paid
 		if last_date_paid is not None:
-			difference = abs((datetime.datetime.strptime('11-04-2017', "%m-%d-%Y") - datetime.datetime.strptime(last_date_paid, "%m-%d-%Y")).days)
-			if difference < 30:
+			print(employee, last_date_paid, month_increment)
+			month, day, year = current_date_str.split('-')[0], current_date_str.split('-')[1], current_date_str.split('-')[2]
+			new_month = (int(month) + month_increment)%12
+			if new_month == 0:
+				new_month = 12
+			current_date_str = str(new_month) + '-'+ day + '-'+year
+			print(current_date_str)
+			difference = abs((datetime.datetime.strptime(current_date_str, "%m-%d-%Y") - datetime.datetime.strptime(last_date_paid, "%m-%d-%Y")).days)
+			if difference <= 30:
 				new_employee['payroll'] = False
 		employees_array.append(new_employee)
 		db.session.commit()
@@ -86,12 +116,10 @@ def payroll_events():
 	payroll_events_array = []
 	print(payroll_events)
 	for payroll_event in payroll_events:
-		print(payroll_event)
 		employee_id = payroll_event.employee_id
 		employee = Employee.query.filter_by(id=employee_id).all()[0]
-		print(employee)
 		year = employee.last_date_paid.split('-')[2]
-		new_event = {'last_date_paid': datetime.datetime.strftime(datetime.datetime.strptime(employee.last_date_paid, '%m-%d-%Y'), '%B') + ' ' + year,
+		new_event = {
 		 			 'first_name': employee.first_name,
 		 			 'last_name': employee.last_name,
 		 			 'salary': employee.salary,

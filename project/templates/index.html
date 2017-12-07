@@ -63,11 +63,10 @@
           <a class="waves-effect waves-light btn" href="{{url_for('purchase_orders')}}">View Purchase Orders</a>
         </div>
 
-        <div class="row" id="inventory_info_row">
-        </div>
-
-        <div class="row" id="sheets_info_row">
-        </div>
+        <form method="POST" action="/increment_date">
+            <button class="btn waves-effect waves-light" type="submit">Increment by One Month
+            </button>
+        </form>
   	</div>
 </body>
 </html>
