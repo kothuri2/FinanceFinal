@@ -64,7 +64,6 @@ def pay_employee():
 		taxes = calculate_taxes(employee)
 		today_date = datetime.datetime.now()
 		date_str = today_date.strftime('%m-%d-%Y')
-		print(employee)
 		month, day, year = date_str.split('-')[0], date_str.split('-')[1], date_str.split('-')[2]
 		new_month = (int(month) + month_increment)%12
 		if new_month == 0:
@@ -95,13 +94,11 @@ def pay_employee():
 		current_date_str = current_date.strftime('%m-%d-%Y')
 		last_date_paid = employee.last_date_paid
 		if last_date_paid is not None:
-			print(employee, last_date_paid, month_increment)
 			month, day, year = current_date_str.split('-')[0], current_date_str.split('-')[1], current_date_str.split('-')[2]
 			new_month = (int(month) + month_increment)%12
 			if new_month == 0:
 				new_month = 12
 			current_date_str = str(new_month) + '-'+ day + '-'+year
-			print(current_date_str)
 			difference = abs((datetime.datetime.strptime(current_date_str, "%m-%d-%Y") - datetime.datetime.strptime(last_date_paid, "%m-%d-%Y")).days)
 			if difference <= 30:
 				new_employee['payroll'] = False
@@ -114,7 +111,6 @@ def pay_employee():
 def payroll_events():
 	payroll_events = PayrollRecord.query.all()
 	payroll_events_array = []
-	print(payroll_events)
 	for payroll_event in payroll_events:
 		employee_id = payroll_event.employee_id
 		employee = Employee.query.filter_by(id=employee_id).all()[0]
@@ -203,10 +199,13 @@ def create_invoice():
 		product_parts = product.parts
 		today_date = datetime.datetime.now()
 		date_str = today_date.strftime('%m-%d-%Y')
+		cogs = 0
 		for part in product_parts:
 			parts_necessary_for_product = product_parts[part]
 			part_inventory = PartInventory.query.filter_by(part=part).all()[0]
 			part_inventory.quantity -= units_purchased * parts_necessary_for_product
+			vendor = Vendor.query.filter_by(id=part_inventory.vendor_id).all()[0]
+			cogs += round(parts_necessary_for_product * vendor.price_per_unit, 2)
 			db.session.commit()
 			db.session.flush()
 		new_invoice = InvoiceRecord(customer_id=customer_id, product_name=request.form['product'].split(',')[0], quantity=units_purchased, date=date_str)
@@ -215,11 +214,10 @@ def create_invoice():
 		balance_sheet.accounts_receivable += round(float(customer.price * units_purchased), 2)
 		balance_sheet.total_current_assets += round(float(customer.price * units_purchased), 2)
 		income_statement.sales += round(float(customer.price * units_purchased), 2)
-		income_statement.gross_profit +=  round(float(customer.price * units_purchased), 2)
-		income_statement.operating_income += round(float(customer.price * units_purchased), 2)
-		income_taxes = round(round(float(customer.price * units_purchased), 2) * 0.07, 2) #illinois tax rate
-		income_statement.income_taxes += income_taxes
-		income_statement.net_income += (round(float(customer.price * units_purchased), 2) - income_taxes)
+		income_statement.cogs += cogs
+		income_statement.gross_profit += round(float(customer.price * units_purchased), 2) - cogs
+		income_statement.operating_income += round(float(customer.price * units_purchased), 2) - cogs
+		income_statement.net_income += round(float(customer.price * units_purchased), 2)  - cogs
 		db.session.add(new_invoice)
 		db.session.commit()
 		db.session.flush()
@@ -227,7 +225,6 @@ def create_invoice():
 	customers = Customer.query.all()
 	# calculate how many units of each product can be made
 	products = Product.query.all()
-	print(products)
 	products_array = []
 	for product in products:
 		product_parts = product.parts
@@ -274,12 +271,6 @@ def create_purchase_order():
 		balance_sheet.accounts_payable += round(float(int(quantity) * vendor.price_per_unit), 2)
 		balance_sheet.total_current_assets += round(float(int(quantity) * vendor.price_per_unit), 2)
 		balance_sheet.total_liabilities += round(float(int(quantity) * vendor.price_per_unit), 2)
-		income_statement.cogs += round(float(int(quantity) * vendor.price_per_unit), 2)
-		income_statement.gross_profit -= round(float(int(quantity) * vendor.price_per_unit), 2)
-		income_statement.operating_income -= round(float(int(quantity) * vendor.price_per_unit), 2)
-		income_taxes = round(round(float(int(quantity) * vendor.price_per_unit), 2) * 0.07, 2)
-		income_statement.income_taxes += income_taxes
-		income_statement.net_income -= (round(float(int(quantity) * vendor.price_per_unit), 2) + income_taxes)
 		db.session.commit()
 		db.session.flush()
 		return redirect('/')
@@ -308,7 +299,7 @@ def parts_inventory():
 		vendor_id = part_inventory.vendor_id
 		vendor = Vendor.query.filter_by(id=vendor_id).all()[0]
 		quantity_low = False
-		if part_inventory.quantity < 12:
+		if part_inventory.quantity < 500:
 			quantity_low = True
 		new_inventory = {'vendor': vendor,
 					 'total': part_inventory.quantity * vendor.price_per_unit,
@@ -352,10 +343,6 @@ def business_info():
 			balance_sheet.business_name = request.form['business_name']
 		if request.form['cash'] != '':
 			balance_sheet.cash = round(float(request.form['cash']), 2)
-			income_statement.sales = round(float(request.form['cash']), 2)
-			income_statement.gross_profit = round(float(request.form['cash']), 2)
-			income_statement.operating_income = round(float(request.form['cash']), 2)
-			income_statement.net_income = round(float(request.form['cash']), 2)
 			balance_sheet.total_current_assets += round(float(request.form['cash']), 2)
 		if request.form['accounts_receivable'] != '':
 			balance_sheet.accounts_receivable = round(float(request.form['accounts_receivable']), 2)
@@ -414,6 +401,13 @@ def balance_sheet():
 
 @app.route("/income_statement", methods=["GET"])
 def income_statement():
+	income_statement = IncomeStatement.query.all()[0]
+	pre_tax_income = income_statement.operating_income
+	income_tax = max(0, round(pre_tax_income * 0.07, 2))
+	income_statement.income_taxes = income_tax
+	income_statement.net_income = round(pre_tax_income - income_tax, 2)
+	db.session.commit()
+	db.session.flush()
 	income_statement = IncomeStatement.query.all()[0]
 	return render_template('income_statement.html', income_statement=income_statement)
 
