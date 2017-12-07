@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<style>
+  hr{
+    width:50px;
+  }
+</style>
+<body>
+   <div class="navbar-fixed">
+	    <nav>
+	      <div class="nav-wrapper">
+	        <a class="brand-logo">Balance Sheet</a>
+	        <ul class="right hide-on-med-and-down">
+	          <li><a href="/">Home</a></li>
+	        </ul>
+	      </div>
+	    </nav>
+    </div>
+    <div class="row">
+     <div class="col s6">
+        <h5 class="row text" style="text-align:center">
+          ASSETS
+        </h5>
+        <div class="row">
+          <div class="col s6">Cash</div>
+          <div class="col s6 text-right">$  {{balance_sheet.cash}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Accounts Receivable</div>
+          <div class="col s6 text-right">$  {{balance_sheet.accounts_receivable}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Inventory</div>
+          <div class="col s6 text-right">$  {{balance_sheet.inventory}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6" style="visibility:hidden">H</div>
+          <div class="col s6 text-right">_____________</div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Total Current Assets</b></div>
+          <div class="col s6 text-right" id="total_current_assets"><b>$  {{balance_sheet.total_current_assets}}</b></div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s6">Land and Building</div>
+          <div class="col s6 text-right">$  {{balance_sheet.land_buildings}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Equipment</div>
+          <div class="col s6 text-right">$  {{balance_sheet.equipment}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Furniture and Fixtures</div>
+          <div class="col s6 text-right">$  {{balance_sheet.furniture_and_fixtures}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6" style="visibility:hidden">H</div>
+          <div class="col s6 text-right">_____________</div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Total Fixed Assets</b></div>
+          <div class="col s6 text-right" id="total_fixed_assets"><b>$  {{balance_sheet.total_fixed_assets}}</b></div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s6"><b>Total Assets</b></div>
+          <div class="col s6 text-right" id="total_assets"><b></b></div>
+        </div>     
+     </div>
+     <div class="col s6">
+        <h5 class="row text" style="text-align:center">
+          LIABILITIES and NET WORTH
+        </h5>
+        <div class="row">
+          <div class="col s6">Accounts Payable</div>
+          <div class="col s6 text-right" id="accounts_payable" value="{{balance_sheet.accounts_payable}}">$  {{balance_sheet.accounts_payable}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Notes Payable</div>
+          <div class="col s6 text-right" id="notes_payable" value="{{balance_sheet.notes_payable}}">$  {{balance_sheet.notes_payable}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Accruals</div>
+          <div class="col s6 text-right" id="accruals" value="{{balance_sheet.accruals}}">$  {{balance_sheet.accruals}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6" style="visibility:hidden">H</div>
+          <div class="col s6 text-right">_____________</div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Total Current Liabilties</b></div>
+          <div class="col s6 text-right" id="total_current_liabilties"><b></b></div>
+        </div>   
+        <br>
+        <div class="row">
+          <div class="col s6">Mortgage</div>
+          <div class="col s6 text-right" id="mortgage">$  {{balance_sheet.mortgage}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6" style="visibility:hidden">H</div>
+          <div class="col s6 text-right">_____________</div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Total Long Term Debt</b></div>
+          <div class="col s6 text-right"><b>$  {{balance_sheet.mortgage}}</b></div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s6"><b>Total Liabilties</b></div>
+          <div class="col s6 text-right" id="total_liabilties"><b></b></div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Net Worth</b></div>
+          <div class="col s6 text-right" id="net_worth"><b></b></div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Total Liabilities and Net Worth</b></div>
+          <div class="col s6 text-right" id="total_liabilites_net_worth"><b></b></div>
+        </div>
+     </div>
+    </div>
+</body>
+<script>
+  $(document).ready(function(){
+    var accounts_payable = parseInt(document.getElementById('accounts_payable').innerHTML.split(' ')[2]);
+    var notes_payable = parseInt(document.getElementById('notes_payable').innerHTML.split(' ')[2]);
+    var accruals = parseInt(document.getElementById('accruals').innerHTML.split(' ')[2]);
+    var mortgage = parseInt(document.getElementById('mortgage').innerHTML.split(' ')[2]);
+    var current_liabilties = accounts_payable + notes_payable + accruals;
+    var total_liabilties = current_liabilties + mortgage;
+    document.getElementById('total_current_liabilties').innerHTML = '$' + String(current_liabilties);
+    document.getElementById('total_liabilties').innerHTML = '$' + String(total_liabilties);
+
+    var total_current_assets = parseInt(document.getElementById('total_current_assets').innerHTML.split(' ')[2]);
+    var total_fixed_assets = parseInt(document.getElementById('total_fixed_assets').innerHTML.split(' ')[2]);
+    var total_assets = total_current_assets + total_fixed_assets;
+    document.getElementById('total_assets').innerHTML = '$' + String(total_assets);
+    var net_worth = total_assets - total_liabilties;
+    document.getElementById('net_worth').innerHTML = '$' + String(net_worth);
+    document.getElementById('total_liabilites_net_worth').innerHTML = '$' + String(total_assets);
+
+  });
+</script>
+</html>

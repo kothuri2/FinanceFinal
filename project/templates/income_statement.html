@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<style>
+  hr{
+    width:50px;
+  }
+</style>
+<body>
+   <div class="navbar-fixed">
+	    <nav>
+	      <div class="nav-wrapper">
+	        <a class="brand-logo">Income Statement</a>
+	        <ul class="right hide-on-med-and-down">
+	          <li><a href="/">Home</a></li>
+	        </ul>
+	      </div>
+	    </nav>
+    </div>
+    <div class="row">
+     <div class="col s6">
+        <br>
+        <div class="row">
+          <div class="col s6">Sales</div>
+          <div class="col s6 text-right">$  {{income_statement.sales}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">COGS</div>
+          <div class="col s6 text-right">$  {{income_statement.cogs}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6" style="visibility:hidden">H</div>
+          <div class="col s6 text-right">_____________</div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Gross Profit</b></div>
+          <div class="col s6 text-right"><b>$  {{income_statement.gross_profit}}</b></div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s6">Payroll</div>
+          <div class="col s6 text-right">$  {{income_statement.payroll}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Payroll Witholding</div>
+          <div class="col s6 text-right">$  {{income_statement.payroll_witholding}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Bills</div>
+          <div class="col s6 text-right">$  {{income_statement.bills}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Annual Expenses</div>
+          <div class="col s6 text-right">$  {{income_statement.annual_expenses}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6" style="visibility:hidden">H</div>
+          <div class="col s6 text-right">_____________</div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Total Expenses</b></div>
+          <div class="col s6 text-right"><b>$  {{income_statement.total_expenses}}</b></div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col s6">Other Income</div>
+          <div class="col s6 text-right">$  {{income_statement.other_income}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Operating Income</div>
+          <div class="col s6 text-right">$  {{income_statement.operating_income}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6">Income Taxes</div>
+          <div class="col s6 text-right">$  {{income_statement.income_taxes}}</div>
+        </div>
+        <div class="row">
+          <div class="col s6" style="visibility:hidden">H</div>
+          <div class="col s6 text-right">_____________</div>
+        </div>
+        <div class="row">
+          <div class="col s6"><b>Net Income</b></div>
+          <div class="col s6 text-right"><b>$  {{income_statement.net_income}}</b></div>
+        </div>
+     </div>
+    </div>
+</body>
+</html>

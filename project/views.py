@@ -41,9 +41,7 @@ def get_employees():
 @app.route("/pay_employee", methods=["POST", "GET"])
 def pay_employee():
 	if request.method == 'POST':
-		print(request.form)
 		employee_id = request.form['employee_id']
-		print(employee_id)
 		employee = Employee.query.filter_by(id=employee_id).all()[0]
 		taxes = calculate_taxes(employee)
 		today_date = datetime.datetime.now()
@@ -52,6 +50,15 @@ def pay_employee():
 		payroll_record = PayrollRecord(employee_id=employee_id,date=date_str,medicare_tax=taxes['medicare_tax_witholding'],
 									   social_security_tax=taxes['social_security_witholding'], federal_tax=taxes['federal_tax_witholding'],
 									   state_tax=taxes['state_tax_witholding'], total_tax=taxes['total_tax'], net_pay=taxes['net_pay'])
+		balance_sheet = BalanceSheet.query.all()[0]
+		balance_sheet.cash -= round(float(employee.salary) - float(taxes['total_tax']), 2)
+		balance_sheet.total_current_assets -= round(float(employee.salary) - float(taxes['total_tax']), 2)
+		income_statement = IncomeStatement.query.all()[0]
+		income_statement.payroll += round(float(employee.salary) - float(taxes['total_tax']), 2)
+		income_statement.payroll_witholding += round(float(taxes['total_tax']), 2)
+		income_statement.total_expenses += round(float(employee.salary) - float(taxes['total_tax']), 2)
+		income_statement.operating_income -= round(float(employee.salary) - float(taxes['total_tax']), 2)
+		income_statement.net_income -= round(float(employee.salary) - float(taxes['total_tax']), 2)
 		db.session.add(payroll_record)
 		db.session.commit()
 		db.session.flush()
@@ -66,9 +73,10 @@ def pay_employee():
 		if last_date_paid is None:
 			employee.last_date_paid = current_date_str
 			last_date_paid = current_date_str
-		difference = abs((datetime.datetime.strptime('11-04-2017', "%m-%d-%Y") - datetime.datetime.strptime(last_date_paid, "%m-%d-%Y")).days)
-		if difference < 30:
-			new_employee['payroll'] = False
+		else:
+			difference = abs((datetime.datetime.strptime('11-04-2017', "%m-%d-%Y") - datetime.datetime.strptime(last_date_paid, "%m-%d-%Y")).days)
+			if difference < 30:
+				new_employee['payroll'] = False
 		employees_array.append(new_employee)
 		db.session.commit()
 		db.session.flush()
@@ -162,6 +170,7 @@ def create_invoice():
 		product = Product.query.filter_by(product_name=request.form['product'].split(',')[0]).all()[0]
 		units_purchased = int(request.form['number_of_units'])
 		customer_id = request.form['customer']
+		customer = Customer.query.filter_by(id=customer_id).all()[0]
 		product_parts = product.parts
 		today_date = datetime.datetime.now()
 		date_str = today_date.strftime('%m-%d-%Y')
@@ -172,6 +181,16 @@ def create_invoice():
 			db.session.commit()
 			db.session.flush()
 		new_invoice = InvoiceRecord(customer_id=customer_id, product_name=request.form['product'].split(',')[0], quantity=units_purchased, date=date_str)
+		balance_sheet = BalanceSheet.query.all()[0]
+		income_statement = IncomeStatement.query.all()[0]
+		balance_sheet.accounts_receivable += round(float(customer.price * units_purchased), 2)
+		balance_sheet.total_current_assets += round(float(customer.price * units_purchased), 2)
+		income_statement.sales += round(float(customer.price * units_purchased), 2)
+		income_statement.gross_profit +=  round(float(customer.price * units_purchased), 2)
+		income_statement.operating_income += round(float(customer.price * units_purchased), 2)
+		income_taxes = round(round(float(customer.price * units_purchased), 2) * 0.07, 2) #illinois tax rate
+		income_statement.income_taxes += income_taxes
+		income_statement.net_income += (round(float(customer.price * units_purchased), 2) - income_taxes)
 		db.session.add(new_invoice)
 		db.session.commit()
 		db.session.flush()
@@ -179,6 +198,7 @@ def create_invoice():
 	customers = Customer.query.all()
 	# calculate how many units of each product can be made
 	products = Product.query.all()
+	print(products)
 	products_array = []
 	for product in products:
 		product_parts = product.parts
@@ -218,6 +238,19 @@ def create_purchase_order():
 		else:
 			part_inventory = PartInventory.query.filter_by(part=part_name).first()
 			part_inventory.quantity += int(quantity)
+		vendor = Vendor.query.filter_by(id=vendor_id).all()[0]
+		balance_sheet = BalanceSheet.query.all()[0]
+		income_statement = IncomeStatement.query.all()[0]
+		balance_sheet.inventory += round(float(int(quantity) * vendor.price_per_unit), 2)
+		balance_sheet.accounts_payable += round(float(int(quantity) * vendor.price_per_unit), 2)
+		balance_sheet.total_current_assets += round(float(int(quantity) * vendor.price_per_unit), 2)
+		balance_sheet.total_liabilities += round(float(int(quantity) * vendor.price_per_unit), 2)
+		income_statement.cogs += round(float(int(quantity) * vendor.price_per_unit), 2)
+		income_statement.gross_profit -= round(float(int(quantity) * vendor.price_per_unit), 2)
+		income_statement.operating_income -= round(float(int(quantity) * vendor.price_per_unit), 2)
+		income_taxes = round(round(float(int(quantity) * vendor.price_per_unit), 2) * 0.07, 2)
+		income_statement.income_taxes += income_taxes
+		income_statement.net_income -= (round(float(int(quantity) * vendor.price_per_unit), 2) + income_taxes)
 		db.session.commit()
 		db.session.flush()
 		return redirect('/')
@@ -280,5 +313,79 @@ def get_new_part():
 	data = json.loads(request.data)
 	vendors = Vendor.query.all()
 	return render_template('part_unit.html', vendors=vendors, counter=data['counter'])
+
+@app.route("/business_info", methods=["POST", "GET"])
+def business_info():
+	if request.method == 'POST':
+		balance_sheet = BalanceSheet.query.all()[0]
+		income_statement = IncomeStatement.query.all()[0]
+		if request.form['business_name'] != '':
+			balance_sheet.business_name = request.form['business_name']
+		if request.form['cash'] != '':
+			balance_sheet.cash = round(float(request.form['cash']), 2)
+			income_statement.sales = round(float(request.form['cash']), 2)
+			income_statement.gross_profit = round(float(request.form['cash']), 2)
+			income_statement.operating_income = round(float(request.form['cash']), 2)
+			income_statement.net_income = round(float(request.form['cash']), 2)
+			balance_sheet.total_current_assets += round(float(request.form['cash']), 2)
+		if request.form['accounts_receivable'] != '':
+			balance_sheet.accounts_receivable = round(float(request.form['accounts_receivable']), 2)
+			balance_sheet.total_current_assets += round(float(request.form['accounts_receivable']), 2)
+		if request.form['inventory'] != '':
+			balance_sheet.inventory = round(float(request.form['inventory']), 2)
+			balance_sheet.total_current_assets += round(float(request.form['inventory']), 2)
+		
+		if request.form['land_buildings'] != '':
+			balance_sheet.land_buildings = round(float(request.form['land_buildings']), 2)
+			balance_sheet.total_fixed_assets += round(float(request.form['land_buildings']), 2)
+		if request.form['equipment'] != '':
+			balance_sheet.equipment = round(float(request.form['equipment']), 2)
+			balance_sheet.total_fixed_assets += round(float(request.form['equipment']), 2)
+		if request.form['furniture_and_fixtures'] != '':
+			balance_sheet.furniture_and_fixtures = round(float(request.form['furniture_and_fixtures']), 2)
+			balance_sheet.total_fixed_assets += round(float(request.form['furniture_and_fixtures']), 2)
+		if request.form['accounts_payable'] != '':
+			balance_sheet.accounts_payable = round(float(request.form['accounts_payable']), 2)
+			balance_sheet.total_liabilities += round(float(request.form['accounts_payable']), 2)
+		if request.form['notes_payable'] != '':
+			balance_sheet.notes_payable = round(float(request.form['notes_payable']), 2)
+			balance_sheet.total_liabilities += round(float(request.form['notes_payable']), 2)
+		if request.form['accruals'] != '':
+			balance_sheet.accruals = round(float(request.form['accruals']), 2)
+			balance_sheet.total_liabilities += round(float(request.form['accruals']), 2)
+		if request.form['mortgage'] != '':
+			balance_sheet.mortgage = round(float(request.form['mortgage']), 2)
+			balance_sheet.total_liabilities += round(float(request.form['mortgage']), 2)
+		if request.form['bills'] != '':
+			income_statement.bills = round(float(request.form['bills']), 2)
+			income_statement.total_expenses += round(float(request.form['bills']), 2)
+			income_statement.operating_income -= round(float(request.form['bills']), 2)
+			income_statement.net_income -= round(float(request.form['bills']), 2)
+		if request.form['annual_expenses'] != '':
+			income_statement.annual_expenses = round(float(request.form['annual_expenses']), 2)
+			income_statement.total_expenses += round(float(request.form['annual_expenses']), 2)
+			income_statement.operating_income -= round(float(request.form['annual_expenses']), 2)
+			income_statement.net_income -= round(float(request.form['annual_expenses']), 2)
+		if request.form['other_income'] != '':
+			income_statement.other_income = round(float(request.form['other_income']), 2)
+			income_statement.operating_income += round(float(request.form['other_income']), 2)
+			income_statement.net_income += round(float(request.form['other_income']), 2)
+
+		db.session.commit()
+		db.session.flush()
+		return redirect('/')
+	balance_sheet = BalanceSheet.query.all()[0]
+	income_statement = IncomeStatement.query.all()[0]
+	return render_template('business_info.html', balance_sheet=balance_sheet, income_statement=income_statement)
+
+@app.route("/balance_sheet", methods=["GET"])
+def balance_sheet():
+	balance_sheet = BalanceSheet.query.all()[0]
+	return render_template('balance_sheet.html', balance_sheet=balance_sheet)
+
+@app.route("/income_statement", methods=["GET"])
+def income_statement():
+	income_statement = IncomeStatement.query.all()[0]
+	return render_template('income_statement.html', income_statement=income_statement)
 
 

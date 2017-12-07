@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <!-- Compiled and minified CSS -->
+  <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+   <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper">
+        <a class="brand-logo">Edit Business Info</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </div>
+    </nav>
+    </div>
+	<div class="row">
+    	<form class="col s12" action="/business_info" method="POST">
+	      <div class="row">
+	      	<div class="input-field col s3">
+	          <i class="material-icons prefix">account_circle</i>
+	          <input name="business_name" id="business_name" type="text" class="validate" placeholder="{{balance_sheet.business_name}}">
+	          <label for="business_name">Business Name</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="cash" id="cash" type="text" class="validate" placeholder="{{balance_sheet.cash}}">
+	          <label for="cash">Cash</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="accounts_receivable" id="accounts_receivable" type="text" class="validate" placeholder="{{balance_sheet.accounts_receivable}}">
+	          <label for="accounts_receivable">Accounts Receivable</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="inventory" id="inventory" type="text" class="validate" placeholder="{{balance_sheet.inventory}}">
+	          <label for="inventory">Inventory</label>
+	        </div>
+	      </div>
+	      <div class="row">
+	       	<div class="input-field col s4">
+	          <i class="material-icons prefix">account_circle</i>
+	          <input name="land_buildings" id="land_buildings" type="text" class="validate" placeholder="{{balance_sheet.land_buildings}}">
+	          <label for="land_buildings">Land and Building</label>
+	        </div>
+	       	<div class="input-field col s4">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="equipment" id="equipment" type="text" class="validate" placeholder="{{balance_sheet.equipment}}">
+	          <label for="equipment">Equipment</label>
+	        </div>
+	       	<div class="input-field col s4">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="furniture_and_fixtures" id="furniture_and_fixtures" type="text" class="validate" placeholder="{{balance_sheet.furniture_and_fixtures}}">
+	          <label for="furniture_and_fixtures">Furniture and Fixtures</label>
+	        </div>
+	      </div>
+	      <div class="row">
+	      	<div class="input-field col s3">
+	          <i class="material-icons prefix">account_circle</i>
+	          <input name="accounts_payable" id="accounts_payable" type="text" class="validate" placeholder="{{balance_sheet.accounts_payable}}">
+	          <label for="accounts_payable">Accounts Payable</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">notes_payable</i>
+	          <input name="notes_payable" id="equipment" type="text" class="validate" placeholder="{{balance_sheet.notes_payable}}">
+	          <label for="notes_payable">Notes Payable</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="accruals" id="accruals" type="text" class="validate" placeholder="{{balance_sheet.accruals}}">
+	          <label for="accruals">Accruals</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="mortgage" id="mortgage" type="text" class="validate" placeholder="{{balance_sheet.mortgage}}">
+	          <label for="mortgage">Mortgage</label>
+	        </div>
+	      </div>
+	      <div class="row">
+	      	<div class="input-field col s3">
+	          <i class="material-icons prefix">account_circle</i>
+	          <input name="bills" id="bills" type="text" class="validate" placeholder="{{income_statement.bills}}">
+	          <label for="bills">Bills</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">notes_payable</i>
+	          <input name="annual_expenses" id="annual_expenses" type="text" class="validate" placeholder="{{income_statement.annual_expenses}}">
+	          <label for="annual_expenses">Annual Expenses</label>
+	        </div>
+	       	<div class="input-field col s3">
+	       	  <i class="material-icons prefix">attach_money</i>
+	          <input name="other_income" id="other_income" type="text" class="validate" placeholder="{{income_statement.other_income}}">
+	          <label for="other_income">Other Income</label>
+	        </div>
+	      </div>
+	      <button class="btn waves-effect waves-light" type="submit">Submit
+		    <i class="material-icons right">send</i>
+		  </button>
+    	</form>
+  	</div>
+</body>
+</html>
+<script>
+$(document).ready(function() {
+    $('select').material_select();
+});
+</script>

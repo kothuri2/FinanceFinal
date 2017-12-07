@@ -133,28 +133,58 @@ class Vendor(db.Model):
 		return '<Vendor {}>'.format(self.company_name)
 
 '''
-ORM for Vendor Model in database
+ORM for BalanceSheet Model in database
 '''
 class BalanceSheet(db.Model):
-	__tablename__ = 'Vendor'
+	__tablename__ = 'BalanceSheet'
 
-	id = db.Column('vendor_id', db.Integer, primary_key=True)
+	id = db.Column('balancesheet_id', db.Integer, primary_key=True)
+	business_name = db.Column(db.String(400))
 	#total_current_assets
 	cash = db.Column(db.Float)
 	accounts_receivable = db.Column(db.Float)
 	inventory = db.Column(db.Float)
+	total_current_assets = db.Column(db.Float)
 
 	#total fixed assets
 	land_buildings = db.Column(db.Float)
 	equipment = db.Column(db.Float)
 	furniture_and_fixtures = db.Column(db.Float)
+	total_fixed_assets = db.Column(db.Float)
 
 	#liabilities
 	accounts_payable = db.Column(db.Float)
 	notes_payable = db.Column(db.Float)
 	accruals = db.Column(db.Float)
 	mortgage = db.Column(db.Float)
-
+	total_liabilities = db.Column(db.Float)
 
 	def __repr__(self):
-		return '<Vendor {}>'.format(self.company_name)
+		return '<BalanceSheet {}>'.format(self.business_name)
+
+'''
+ORM for IncomeStatement Model in database
+'''
+class IncomeStatement(db.Model):
+	__tablename__ = 'IncomeStatement'
+
+	id = db.Column('incomestatement_id', db.Integer, primary_key=True)
+	sales = db.Column(db.Float)
+	cogs = db.Column(db.Float)
+	gross_profit = db.Column(db.Float)
+
+	#expenses
+	payroll = db.Column(db.Float)
+	payroll_witholding = db.Column(db.Float)
+	bills = db.Column(db.Float) #business_info page
+	annual_expenses = db.Column(db.Float) #business_info page
+	total_expenses= db.Column(db.Float)
+
+	#total_expenses
+	other_income = db.Column(db.Float) #business_info page
+	operating_income = db.Column(db.Float)
+	income_taxes = db.Column(db.Float)
+	net_income = db.Column(db.Float)
+
+	def __repr__(self):
+		return '<IncomeStatement {}>'.format(self.sales)

@@ -10,7 +10,7 @@ def calculate_taxes(employee):
 		'social_security_witholding': round(social_security_witholding, 2),
 		'medicare_tax_witholding': round(medicare_tax_witholding, 2),
 		'total_tax': round(total_tax, 2),
-		'net_pay': round(employee.salary - total_tax, 2)
+		'net_pay': round(float(employee.salary/12) - total_tax, 2)
 	}
 
 def calculate_income_tax_witholding(salary, number_of_allowances):
@@ -139,9 +139,9 @@ def calculate_state_tax_witholding(salary, number_of_allowances):
 
 def calculate_social_security_witheld(salary):
 	social_security_tax_rate = 0.062
-	return social_security_tax_rate * salary
+	return (social_security_tax_rate * salary)/12
 
 def calculate_medicare_witheld(salary):
 	medicare_tax_rate = 0.0145
-	return medicare_tax_rate * salary
+	return (medicare_tax_rate * salary)/12
 

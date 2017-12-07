@@ -17,9 +17,10 @@
   			    </div>
 			    </nav>
           <br>
+          <a class="waves-effect waves-light btn" href="{{url_for('business_info')}}">Edit Business Info</a>
           <a class="waves-effect waves-light btn" href="{{url_for('parts_inventory')}}">View Parts Inventory</a>
-          <a class="waves-effect waves-light btn" href="/">View PL</a>
-          <a class="waves-effect waves-light btn" href="/">View Balance Sheet</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('income_statement')}}">View PL</a>
+          <a class="waves-effect waves-light btn" href="{{url_for('balance_sheet')}}">View Balance Sheet</a>
           <a class="waves-effect waves-light btn" href="{{url_for('build_units')}}">Build Units</a>
         </div>
 
